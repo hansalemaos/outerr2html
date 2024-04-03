@@ -224,6 +224,7 @@ def killthread(threadobject):
         return False
     return True
 
+
 # C and console output crashes on ipython terminal
 if sys.modules.get("IPython.terminal.prompts", None):
 
@@ -342,6 +343,7 @@ if sys.modules.get("IPython.terminal.prompts", None):
             time.sleep(sleep_at_end)
 
 else:
+
     @contextmanager
     def stdout_redirector(
         outfolder,
@@ -415,12 +417,13 @@ else:
             },
         )
         thread_being_executed()
+
         # based on https://gist.github.com/natedileas/8eb31dc03b76183c0211cdde57791005
         def _redirect_stdout(to_fd):
             """Redirect stdout to the given file descriptor."""
             # Flush the C-level buffer stdout
             sys.stdout.flush()
-            libc.fflush(None) 
+            libc.fflush(None)
             # Flush and close sys.stdout - also closes the file descriptor (fd)
             sys.stdout.close()  # works with python.exe, but crashes ipython
             # Make original_stdout_fd point to the same file as to_fd
@@ -433,6 +436,7 @@ else:
                 line_buffering=True,
                 write_through=True,
             )
+
         def _redirect_stderr(to_fd):
             """Redirect stdout to the given file descriptor."""
             # Flush the C-level buffer stdout
@@ -485,9 +489,14 @@ else:
                 else:
                     for filelists in [stdout_list, stderr_list]:
                         for fi in filelists:
-                            with open(fi, "r", encoding=config.enco) as f:
+                            with open(
+                                fi, "r", encoding=config.enco, errors="backslashreplace"
+                            ) as f:
                                 with open(
-                                    fi[:-4] + ".html", "w", encoding=config.enco
+                                    fi[:-4] + ".html",
+                                    "w",
+                                    encoding=config.enco,
+                                    errors="backslashreplace",
                                 ) as f2:
                                     f2.write(conv.convert(f.read()))
 
